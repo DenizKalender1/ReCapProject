@@ -10,15 +10,15 @@ namespace ConsoleUI
         static void Main(string[] args)
         {
             //dto= data transformatşon object
-            // CarTest();
-            //BrandTest();
+             CarTest();
+            BrandTest();
 
         }
 
         private static void BrandTest()
         {
             BrandManager brandManager = new BrandManager(new EfBrandDal());
-            foreach (var brand in brandManager.GetAll())
+            foreach (var brand in brandManager.GetAll().Data)
             {
                 Console.WriteLine(brand.BrandName);
             }
@@ -26,11 +26,23 @@ namespace ConsoleUI
 
         private static void CarTest()
         {
-            CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarDetails())
+            CarManager carManager = new CarManager(new EfCarDal(),
+                new BrandManager(new EfBrandDal()));
+            var result = carManager.GetCarDetails();
+
+            if (result.Success==true)
             {
-                Console.WriteLine(car.CarName + "/" + car.BrandName); 
+                foreach (var car in result.Data)
+                {
+                    Console.WriteLine(car.CarName + "/" + car.BrandName);
+                }
             }
+            else
+            {
+                Console.WriteLine(result.Message);
+            }
+            
+            
         }
     }
 }
